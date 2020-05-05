@@ -10,11 +10,11 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from itertools import chain
 
-import backend
+import tensorplane.backend
 _B = os.getenv('DATAFLOW_BACKEND')
 B = getattr(backend, _B)()
 
-from backend import AbstractTensor
+from tensorplane.backend import AbstractTensor
 from attributes import UndefinedAttribute
 
 from utils import all_slice, I_
@@ -230,7 +230,7 @@ class Dataset(object):
 		nsplits = len(ratio)
 		fsplits = []
 		indices = [0]
-		
+
 		for i, r in enumerate(ratio):
 			indices.append(int(len(dataset)*r) + indices[-1])
 
