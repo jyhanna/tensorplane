@@ -1,6 +1,5 @@
 
-Tensorvault
-======
+# Tensorvault
 Unified data management in Python
 ------
 
