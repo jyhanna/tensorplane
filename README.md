@@ -1,5 +1,5 @@
 
-# Tensorvault
+# Tensorplane
 Unified data management in Python
 ------
 

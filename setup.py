@@ -1,10 +1,10 @@
 from setuptools import setup
 
 setup(
-	name='tensorvault',
+	name='tensorplane',
 	version='0.1.0',
 	author='Jonathan Hanna',
-	packages=['tensorvault'],
+	packages=['tensorplane'],
 	license='LICENSE.txt',
 	description='A modular and expressive interface for managing data in Python',
 	long_description=open('README.md').read(),
