@@ -10,16 +10,16 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from itertools import chain
 
-import tensorplane.backend
+from tensorplane import backend
 _B = os.getenv('DATAFLOW_BACKEND')
 B = getattr(backend, _B)()
 
 from tensorplane.backend import AbstractTensor
-from attributes import UndefinedAttribute
+from tensorplane.attributes import UndefinedAttribute
 
-from utils import all_slice, I_
+from tensorplane.utils import all_slice, I_
 
-from index import (
+from tensorplane.index import (
 	IndexEngine,
 	default_indices,
 	NullAssignment,

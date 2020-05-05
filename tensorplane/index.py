@@ -7,14 +7,14 @@ from itertools import chain, product
 
 import numpy as np
 
-import backend
+from tensorplane import backend
 _B = os.getenv('DATAFLOW_BACKEND')
 B = getattr(backend, _B)()
 
-from backend import AbstractTensor
-from attributes import UndefinedAttribute
+from tensorplane.backend import AbstractTensor
+from tensorplane.attributes import UndefinedAttribute
 
-from utils import is_class, is_subclass, list_flatten, all_slice, I_
+from tensorplane.utils import is_class, is_subclass, list_flatten, all_slice, I_
 
 
 def default_indices():

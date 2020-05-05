@@ -3,7 +3,7 @@ import sys
 import time
 import functools
 
-from utils import exception_message, list_type, list_dims, rev_slice, slice_to_range
+from tensorplane.utils import exception_message, list_type, list_dims, rev_slice, slice_to_range
 
 import numpy as np
 
