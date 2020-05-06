@@ -15,14 +15,14 @@ from .lib.attrs import UndefinedAttribute, NullAssignment
 from .lib.index import IndexEngine, default_indices
 from .lib.utils import all_slice, I_
 
-B = backend.get()
-
 class InvalidFeatureAccessType(Exception): pass
 class InvalidFeatureIdentifier(Exception): pass
 class InvalidFeatureAddress(Exception): pass
 class InvalidDeletionShape(Exception): pass
 class UnsupportedDataType(Exception): pass
 class InvalidTensorType(Exception): pass
+
+global B # backend instance
 
 def _check(*args):
 	if (len(args)==3 and args[0] != args[1]) or (len(args)==2 and not args[0]):
@@ -63,6 +63,8 @@ class Dataset(object):
 		Features of > 2 dimensions are flattened along the inner axis resulting in a 2d feature
 		for consistency. Features of one dimension are expanded into two (i.e. 1 column).
 		"""
+		B = backend.get()
+
 		self._indexer = IndexEngine(*default_indices())
 		self._features = []
 		_outer_shape = 0
