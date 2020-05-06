@@ -1,0 +1,15 @@
+name: tensorplane-dev
+dependencies:
+  # required
+  - python=3.7
+  - numpy>=1.15
+
+  # backends (-np)
+  - pytorch>=1.4
+
+  # testing
+  - pytest>=5.0.1
+
+  # optional
+  - matplotlib>=2.2
+  - scipy>=1.2
