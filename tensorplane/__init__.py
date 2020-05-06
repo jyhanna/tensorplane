@@ -1,6 +1,5 @@
 __all__ = [
-    'core',
-    'data',
+    'core'
 ]
 
-from .core import data
+from . import core
