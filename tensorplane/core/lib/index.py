@@ -7,14 +7,10 @@ from itertools import chain, product
 
 import numpy as np
 
-from tensorplane import backend
-_B = os.getenv('DATAFLOW_BACKEND')
-B = getattr(backend, _B)()
+from .utils import is_class, is_subclass, list_flatten, all_slice, I_
 
-from tensorplane.backend import AbstractTensor
-from tensorplane.attributes import UndefinedAttribute
-
-from tensorplane.utils import is_class, is_subclass, list_flatten, all_slice, I_
+from .backend import AbstractTensor
+from .attrs import UndefinedAttribute, NullAssignment
 
 
 def default_indices():
@@ -59,13 +55,6 @@ def SimpleParse(x, top=True):
 	res = type(x)([(type(v) if (not isinstance(v, (list, tuple)) and not type(v)==type) else
 	(v if type(v)==type else type(v)(SimpleParse(v[0] if v else None, top=False)))) for v in x])
 	return res if len(res)>1 or not top else res[0]
-
-
-class NullAssignment(object):
-	"""
-	"""
-	def __init__(self):
-		raise Exception('Cannot initialize null assignment, use type as flag.')
 
 
 class IndexEngine(object):

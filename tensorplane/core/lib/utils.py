@@ -5,6 +5,7 @@ import time
 
 all_slice = slice(None, None, None)
 
+
 def rev_slice(i):
 	"""
 	"""

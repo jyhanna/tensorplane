@@ -1,8 +1,16 @@
 import sys
 
 
+class NullAssignment(object):
+	"""
+	"""
+	def __init__(self):
+		raise Exception('Cannot initialize null assignment, use type as flag.')
+
+
 def _UndefinedAttribute(x):
 	return AttributeError('Attempted to access undefined dataset attribute {}'.format(x))
+
 
 class UndefinedAttribute(object):
 	"""

@@ -10,21 +10,12 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from itertools import chain
 
-from tensorplane import backend
-_B = os.getenv('DATAFLOW_BACKEND')
-B = getattr(backend, _B)()
+from .lib import backend
+from .lib.attrs import UndefinedAttribute, NullAssignment
+from .lib.index import IndexEngine, default_indices
+from .lib.utils import all_slice, I_
 
-from tensorplane.backend import AbstractTensor
-from tensorplane.attributes import UndefinedAttribute
-
-from tensorplane.utils import all_slice, I_
-
-from tensorplane.index import (
-	IndexEngine,
-	default_indices,
-	NullAssignment,
-	UndefinedAttribute,
-)
+B = backend.get()
 
 class InvalidFeatureAccessType(Exception): pass
 class InvalidFeatureIdentifier(Exception): pass

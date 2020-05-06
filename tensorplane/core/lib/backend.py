@@ -3,11 +3,10 @@ import sys
 import time
 import functools
 
-from tensorplane.utils import exception_message, list_type, list_dims, rev_slice, slice_to_range
+from .utils import exception_message, list_type, list_dims, rev_slice, slice_to_range
 
 import numpy as np
 
-_B = os.getenv('DATAFLOW_BACKEND')
 
 backends = {
 	'NumPyBackend': ('numpy', 'np'),
@@ -15,18 +14,36 @@ backends = {
 	'TensorFlowBackend': ('tensorflow', 'tf')
 }
 
-try:
-	if _B in backends:
-		globals()[backends[_B][1]] = __import__(backends[_B][0])
-	else:
-		raise Exception(exception_message("""Unsupported backend {}. Please select
-		from the available backend tensor libraries: {}""", _B, list(backends.keys())))
 
-except ModuleNotFoundError:
-	raise ModuleNotFoundError(exception_message("""Backend DataFlow type {}
-	could not be imported. Please install the necessary dependencies to
-	use this backend, or try installing another backend package from the
-	following options: {}""", _B, list(backends.keys())))
+def get():
+	try:
+		if 'B' in globals():
+			return globals()['B']
+
+		_B = os.getenv('TENSORPLANE_BACKEND')
+		print('Initializing backend {}'.format(_B))
+
+		if _B in backends:
+			global B
+			globals()[backends[_B][1]] = __import__(backends[_B][0])
+			B = globals()[_B]()
+		elif _B is None:
+			raise Exception(exception_message("""No backend set. Please specify a
+			backend tensor library by setting environment variable TENSORPLANE_BACKEND
+			to one of {}""", list(backends.keys())))
+		else:
+			raise Exception(exception_message("""Unsupported backend {}. Please select
+			from the available backend tensor libraries: {}""", _B, list(backends.keys())))
+
+	except ModuleNotFoundError:
+		raise ModuleNotFoundError(exception_message("""Backend DataFlow type {}
+		could not be imported. Please install the necessary dependencies to
+		use this backend, or try installing another backend package from the
+		following options: {}""", _B, list(backends.keys())))
+
+
+
+	return B
 
 
 def tensor_property(func):
@@ -561,5 +578,3 @@ class PyTorchBackend(AbstractBackend):
 class TensorFlowBackend(AbstractBackend):
 	def __init__(self, *opts):
 		raise NotImplementedError('TensorFlow backend is not yet implemented.')
-
-B = globals()[_B]()
