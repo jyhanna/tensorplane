@@ -1,8 +1,9 @@
 import os
 import numpy as np
-from core import data
 
 os.environ["TENSORPLANE_BACKEND"] = 'NumPyBackend'
+
+from core import data
 
 def main():
     data.Dataset(x=np.arange(10))
