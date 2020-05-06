@@ -1,22 +1,25 @@
 
-# Tensorplane
-Unified data management in Python
-------
 
-#### About
+![Tensorplane Logo](/.github/logo.svg)
+
+# Tensorplane: Unified data management in Python
+
+
+## About
+
 
 ...
 
 Supported Libraries
 
-#### Installation
+## Installation
 
 ...
 
-#### Usage
+## Usage
 
 ...
 
-#### To-do
+## To-do
 
 ...
