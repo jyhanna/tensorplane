@@ -3,4 +3,4 @@ import pytest
 
 from tensorplane.core.lib import backend
 
-backend.set('NumPyBackend')
+backend.set('NumPyBadckend')
