@@ -6,6 +6,18 @@ import time
 all_slice = slice(None, None, None)
 
 
+def split_array(col_list, array):
+	"""
+	Split an AbstractTensor vertically w.r.t a list of tensors
+	"""
+	new_arr = [0]*len(col_list)
+	prev_idx = 0
+	for i,x in enumerate(col_list):
+		new_arr[i] = array.index(I_[:,prev_idx:prev_idx+x.shape()[-1]])
+		prev_idx += x.shape()[-1]
+	return new_arr
+
+
 def rev_slice(i):
 	"""
 	"""

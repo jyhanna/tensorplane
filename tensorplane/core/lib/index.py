@@ -7,7 +7,7 @@ from itertools import chain, product
 
 import numpy as np
 
-from .utils import is_class, is_subclass, list_flatten, all_slice, I_
+from .utils import is_class, is_subclass, split_array, list_flatten, all_slice, I_
 
 from .backend import AbstractTensor
 from .attrs import UndefinedAttribute, NullAssignment
@@ -21,20 +21,9 @@ def default_indices():
 			IndexRowORColumnSubset]
 
 
-def split_array(col_list, array):
-	"""
-	"""
-	new_arr = [0]*len(col_list)
-	prev_idx = 0
-	for i,x in enumerate(col_list):
-		new_arr[i] = array.index(I_[:,prev_idx:prev_idx+x.shape()[-1]])
-		prev_idx += x.shape()[-1]
-	return new_arr
-
-
 def index(*vals, is_compact=False):
 	"""
-	Index wrapper
+	Index wrapper for indexing grammars
 	"""
 	if is_compact:
 		return list(product(*vals))
@@ -44,12 +33,14 @@ def index(*vals, is_compact=False):
 
 def Map(index, fn):
 	"""
+	Map indices to a function
 	"""
 	return (index, fn)
 
 
 def SimpleParse(x, top=True):
 	"""
+	Debugging and Exception message index grammar parser (needs refactoring)
 	"""
 	x = x if isinstance(x, (list, tuple)) else [x]
 	res = type(x)([(type(v) if (not isinstance(v, (list, tuple)) and not type(v)==type) else
@@ -57,7 +48,7 @@ def SimpleParse(x, top=True):
 	return res if len(res)>1 or not top else res[0]
 
 
-class IndexEngine(object):
+class Indexer(object):
 	"""
 	Main indexing class
 	"""

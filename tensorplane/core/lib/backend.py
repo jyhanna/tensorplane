@@ -7,11 +7,12 @@ from .utils import exception_message, list_type, list_dims, rev_slice, slice_to_
 
 import numpy as np
 
+set_type = set # overridden by backend set function
 
 backends = {
 	'NumPyBackend': ('numpy', 'np'),
 	'PyTorchBackend': ('torch', 'torch'),
-	'TensorFlowBackend': ('tensorflow', 'tf')
+	#'TensorFlowBackend': ('tensorflow', 'tf')
 }
 
 
@@ -79,6 +80,7 @@ def backend_only(func):
 	of AbstractTensor. Mutually exclusive usage with @tensor_property. This decorator
 	MUST be used AFTER @unwrapped_tensor, otherwise an exception will be raised.
 	"""
+	@functools.wraps(func)
 	def property_wrap(*args, **kwargs):
 		if len(args) > 1 and isinstance(args[1], AbstractTensor.Binding):
 			raise Exception(exception_message("""AbstractTensor does not have attibute
@@ -94,12 +96,10 @@ def unwrapped_tensor(func):
 	"""
 	@functools.wraps(func)
 	def tensor_wrap(*args, **kwargs):
-		kwargs = {k:v for k,v in B.concretify(tuple(kwargs.items()))}
-		args = B.concretify(tuple(args))
+		kwargs = {k:v for k,v in B.unwrap(tuple(kwargs.items()))}
+		args = B.unwrap(tuple(args))
 		a = func(*args, **kwargs)
-		if B.is_concrete(a):
-			a = AbstractTensor(a)
-		return a
+		return B.wrap(a)
 	return tensor_wrap
 
 
@@ -138,6 +138,12 @@ class AbstractTensor(object):
 			pass
 		raise AttributeError(exception_message('Backend has no attribute {}', name))
 
+	def __str__(self):
+		return f'Tensorplane.AbstractTensor: shape: {self.shape()}, data:\n{self.data}'
+
+	def __repr__(self):
+		return str(self)
+
 class AbstractBackend(object):
 	"""
 	The abstract backend interface for using common scientific computation
@@ -146,6 +152,7 @@ class AbstractBackend(object):
 	def __init__(self, *opts):
 		pass
 
+	@unwrapped_tensor
 	@backend_only
 	def apply(self, d, method, *args, **kwargs):
 		"""
@@ -159,45 +166,51 @@ class AbstractBackend(object):
 		and information hiding provided by the AbstractBackend class. This
 		may be replaced/refactored in future more stable versions of DataFlow.
 		"""
-		return getattr(self.concretify(d), method)(*args, **kwargs)
+		return getattr(self.unwrap(d), method)(*args, **kwargs)
 
 	@tensor_property
-	def abstractify(self, stuff, deep=False):
+	def wrap(self, stuff):
 		"""
+		Recursively wraps an AbstractTensor object. Descends into
+		lists, tuples, sets, and dicts.
 		"""
-		recurse_types = (tuple, list) if deep else tuple
-		if self.is_concrete(stuff):
+		if self.is_raw_tensor(stuff):
 			return AbstractTensor(stuff)
-		if isinstance(stuff, recurse_types):
-			return type(stuff)([self.abstractify(s, deep=deep) for s in stuff])
+		if isinstance(stuff, (tuple, set_type, list)):
+			return type(stuff)([self.wrap(s) for s in stuff])
+		if isinstance(stuff, dict):
+			return {k:self.wrap(v) for k,v in stuff.items()}
 		return stuff
 
 	@tensor_property
-	def concretify(self, stuff, deep=False):
+	def unwrap(self, stuff):
 		"""
+		Recursively unwraps an AbstractTensor object. Descends into
+		lists, tuples, sets, and dicts.
 		"""
-		recurse_types = (tuple, list) if deep else tuple
-		if self.is_abstract(stuff):
+		if self.is_tensor(stuff):
 			return stuff.data
-		if self.is_concrete(stuff):
+		if self.is_raw_tensor(stuff):
 			return stuff
-		if isinstance(stuff, recurse_types):
-			return type(stuff)([self.concretify(s, deep=deep) for s in stuff])
+		if isinstance(stuff, (tuple, set_type, list)):
+			return type(stuff)([self.unwrap(s) for s in stuff])
+		if isinstance(stuff, dict):
+			return {k:self.unwrap(v) for k,v in stuff.items()}
 		return stuff
 
 	@tensor_property
-	def is_abstract(self, x):
+	def is_tensor(self, x):
 		"""
-		Return if x is an instance of the concrete tensor/array-like object
+		Return if x is an AbstractTensor object
 		"""
 		return isinstance(x, AbstractTensor)
 
 	@tensor_property
-	def is_concrete(self, x):
+	def is_raw_tensor(self, x):
 		"""
 		Return if x is an instance of the concrete tensor/array-like object
 		"""
-		return self._is_concrete(x)
+		return self._is_raw_tensor(x)
 
 	@property
 	@backend_only
@@ -428,7 +441,7 @@ class NumPyBackend(AbstractBackend):
 	def _address(self, d):
 		return d.__array_interface__['data'][0]
 
-	def _is_concrete(self, x):
+	def _is_raw_tensor(self, x):
 		return isinstance(x, np.ndarray)
 
 	def _type(self, d, dtype):
@@ -512,7 +525,7 @@ class PyTorchBackend(AbstractBackend):
 	def _address(self, d):
 		return d.data_ptr()
 
-	def _is_concrete(self, x):
+	def _is_raw_tensor(self, x):
 		return torch.is_tensor(x)
 
 	def _type(self, d, dtype):
@@ -544,7 +557,7 @@ class PyTorchBackend(AbstractBackend):
 		return torch.ones(*shape)
 
 	def _make_zeros(self, shape):
-		return np.zeros(*shape)
+		return torch.zeros(*shape)
 
 	def _make_copy(self, d):
 		return d.clone()
