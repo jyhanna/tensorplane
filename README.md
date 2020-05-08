@@ -6,9 +6,9 @@
 
 # Tensorplane: Unified data management in Python
 
-Tensorplane is a Python library for high-level dataset management built upon powerful array and tensor frameworks like NumPy and PyTorch. While other dataset-oriented Python libraries exist, Tensorplane is modularly designed to interface with these advanced and well-supported backend frameworks to provide a single data access and manipulation interface for common data operations. Tensorplane is further designed for modern deep learning data processing pipelines by supporting a collection of multidimensional feature tensors encapsulated in a single object. Each tensor can also be a different type, allowing uniform manipulation of potentially heterogeneous datasets.
+Tensorplane is a Python library for high-level dataset management built upon powerful array and tensor frameworks like NumPy and PyTorch. While other dataset-oriented Python libraries exist, Tensorplane is modularly designed to leverage these advanced and well-supported backend frameworks to provide a single data access and manipulation interface for common data operations. Tensorplane is further designed for modern deep learning data processing pipelines by supporting a collection of multidimensional feature tensors encapsulated in a single object. Each tensor can also be a different type, allowing uniform manipulation of potentially heterogeneous datasets.
 
-**NOTE: Tensorplane if in early phases of pre-alpha development. While most basic features have been implemented, significant expansions in the codebase and modifications to the API are forthcoming. It is not recommended to use the current version or any previous versions or derivations of this software in a production environment until a future more stable distribution of Tensorplane is released.**
+**NOTE: Tensorplane if in early phases of pre-alpha development. While most (but by no means all) basic features have been implemented, significant expansions in the codebase and modifications to the API are forthcoming. It is not recommended to use the current version or any previous versions or derivations of this software in a production environment until a future more stable distribution of Tensorplane is released.**
 
 ## About
 
@@ -68,7 +68,7 @@ ds = Dataset(x=np.randint(1, (100, 3)),
 
 ```
 
-Now, you're ready to start manipulating data. Use `Dataset`s powerful indexing syntax to do stuff with or get stuff from to your data. Below are some examples of what you can do (using the NumPy backend, but just replace your inputs and indices with tensors instead if using PyTorch).
+Now, you're ready to start manipulating data. Use `Dataset`s powerful indexing syntax to do stuff with, or get stuff from your data. Below are some examples of what you can do (using the NumPy backend, but just replace your inputs and indices with tensors instead if using PyTorch).
 
 The basic syntax for indexing `Datasets` is:
 
@@ -132,8 +132,8 @@ Full documentation coming soon, but if you have any questions, concerns, or sugg
 
 ## Contributing
 
-Contributions are more than welcome, especially in these early phases of development. Email `jonathanyussefhanna(at: gmail).com` for more info.
+Contributions are more than welcome, especially in these early phases of development. Feel free to email `jonathanyussefhanna(at: gmail).com` for more info.
 
 ## To-do
 
-Alot
+A lot
