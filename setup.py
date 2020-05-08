@@ -12,4 +12,11 @@ setup(
 	install_requires=[
         "numpy >= 1.15.0",
 	],
+	classifiers=[
+		'Development Status :: 2 - Pre-Alpha',
+		'Intended Audience :: Developers',
+		'Topic :: Scientific/Engineering :: Artificial Intelligence',
+		'License :: OSI Approved :: BSD License',
+		'Programming Language :: Python :: 3'
+	]
 )
