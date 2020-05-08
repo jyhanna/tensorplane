@@ -8,7 +8,7 @@
 
 Tensorplane is a Python library for high-level dataset management built upon powerful array and tensor frameworks like NumPy and PyTorch. While other dataset-oriented Python libraries exist, Tensorplane is modularly designed to leverage these advanced and well-supported backend frameworks to provide a single data access and manipulation interface for common data operations. Tensorplane is further designed for modern deep learning data processing pipelines by supporting a collection of multidimensional feature tensors encapsulated in a single object. Each tensor can also be a different type, allowing uniform manipulation of potentially heterogeneous datasets.
 
-**NOTE: Tensorplane if in early phases of pre-alpha development. While most (but by no means all) basic features have been implemented, significant expansions in the codebase and modifications to the API are forthcoming. It is not recommended to use the current version or any previous versions or derivations of this software in a production environment until a future more stable distribution of Tensorplane is released.**
+**NOTE: Tensorplane is in early phases of pre-alpha development. While most (but by no means all) basic features have been implemented, significant expansions in the codebase and modifications to the API are forthcoming. It is not recommended to use the current version or any previous versions or derivations of this software in a production environment until a future more stable distribution of Tensorplane is released.**
 
 ## About
 
