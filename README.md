@@ -15,12 +15,12 @@ Supported Libraries...
 
 ## Installation
 
-To be filled out
+...
 
 ## Usage
 
-To be filled out
+...
 
 ## To-do
 
-To be filled out
+...
