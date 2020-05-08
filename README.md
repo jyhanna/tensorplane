@@ -51,7 +51,7 @@ Note that `'YOUR-BACKEND'` must be one of the keys in the dictionary of availabl
 
 To get started, load a dataset from a file using `Dataset.load` or initialize it using your tensor/array types of choice, with feature names as keyword arguments:
 
-```
+```python
 from tensorplane.core.data import Dataset
 backend.set('NumPyBackend')
 
@@ -79,7 +79,7 @@ The basic syntax for indexing `Datasets` is:
   - A `list` of backend tensor types, specifically the attributes of the dataset or a new attribute (e.g. `ds.labels`)
   - An empty slice `:` indicating all features in the dataset are to be accessed or manipulated
 
-```
+```python
 # sort all instances by a feature
 ds = ds[np.argsort(ds.x),:]
 
