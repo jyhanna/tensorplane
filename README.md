@@ -52,6 +52,7 @@ Note that `'YOUR-BACKEND'` must be one of the keys in the dictionary of availabl
 To get started, load a dataset from a file using `Dataset.load` or initialize it using your tensor/array types of choice, with feature names as keyword arguments:
 
 ```python
+from tensorplane.core.lib import backend
 from tensorplane.core.data import Dataset
 backend.set('NumPyBackend')
 
