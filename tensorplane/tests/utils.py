@@ -16,7 +16,7 @@ lrange = lambda *args: list(range(*args))
 lprod =  lambda *args: list(product(*args))
 
 
-def np_convert(ts, fn=(lambda x: x), copy=True):
+def np_convert(ts, fn=(lambda x: x), copy=False):
     return [fn(array(c).copy() if copy else array(c)) for c in ts]
 
 
