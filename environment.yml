@@ -11,6 +11,9 @@ dependencies:
   - pytest>=5.0.1
   - decorator>=4.4
 
+  # distribution
+  - twine
+
   # optional
   - matplotlib>=2.2
   - scipy>=1.2
