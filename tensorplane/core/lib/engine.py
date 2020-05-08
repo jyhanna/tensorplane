@@ -12,7 +12,7 @@ from itertools import chain
 from . import backend
 from .attrs import UndefinedAttribute, NullAssignment
 from .index import Indexer, default_indices
-from .utils import all_slice, I_
+from .utils import all_slice, exception_message, I_
 
 class InvalidFeatureAccessType(Exception): pass
 class InvalidFeatureIdentifier(Exception): pass
@@ -176,7 +176,6 @@ class DataEngine(object):
 		assert isinstance(f, str), 'Feature ID must be a string'
 		assert B.is_tensor(v) or v is None, 'Feature must be tensor or None'
 		if v is not None:
-			#_check(v.shape[0], len(self), Exception('Invalid feature length'))
 			if v.address() in [self.get_feature(id).address() for id in self._features]:
 				v = B.make_copy(v)
 			self._features[f] = v
@@ -228,7 +227,9 @@ class DataEngine(object):
 		idx0, idx1, _ = self._indexer(i, NullAssignment, all_columns=self.tensors)
 		if B.is_tensor(idx0):
 			idx0 = idx0.reshape(-1)
-			_check(idx0.shape()[0], len(self), Exception())
+			_check(idx0.shape()[0], len(self), Exception(exception_message(f"""
+			Bad tensor indexer shape {idx0.shape()}; dimension 0 should equal
+			dataset length {len(self)} (the number of instances in dataset)""")))
 		return DataEngine(**{self.get_feature(tensor):tensor.index(I_[idx0,:])
 					   for tensor in idx1})
 

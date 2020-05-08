@@ -598,7 +598,7 @@ class PyTorchBackend(AbstractBackend):
 		return torch.argsort(d, dim=axis)
 
 	def _equal(self, d1, d2):
-		raise torch.equal(d1, d2)
+		return torch.equal(d1, d2)
 
 
 class TensorFlowBackend(AbstractBackend):
