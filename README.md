@@ -34,14 +34,14 @@ The latest version of Tensorplane can be installed using `pip`:
 
 First things first, choose you backend tensor framework. Begin by installing the necessary backend (e.g. `pip install torch`). Then, before initializing any classes, add the following code:
 
-```
+```python
 from tensorplane.core.lib import backend
 backend.set('YOUR-BACKEND')
 ```
 
 Or just set the environment variable `TENSORPLANE_BACKEND`:
 
-```
+```python
 os.environ['TENSORPLANE_BACKEND'] = 'YOUR-BACKEND'
 ```
 
