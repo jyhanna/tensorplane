@@ -79,6 +79,10 @@ The basic syntax for indexing `Datasets` is:
 - Second Index (dimension 1): Columns/features
   - A `list` of backend tensor types, specifically the attributes of the dataset or a new attribute (e.g. `ds.labels`)
   - An empty slice `:` indicating all features in the dataset are to be accessed or manipulated
+- Optional assignment values
+  - A `list` of backend tensor types to assign
+  - A backend tensor type for assignment of a new feature
+  - `None` for deleting a subset of data (instances xor features) 
 
 ```python
 # sort all instances by a feature
@@ -105,8 +109,7 @@ ds[:20,:] = None
 ds[:,[ds.y, ds.x]] = None
 
 # create some features (~hstack)
-ds[:,[ds.w]] = np.zeros((len(ds), 1))
-ds[:,[ds.v]] = np.zeros((len(ds), 1))
+ds[:,[ds.w, ds.v]] = [np.zeros((len(ds), 1)), np.zeros((len(ds), 1))]
 ds[:,[ds.q]] = np.ones((len(ds), 2))
 ds[:,[ds.r]] = np.ones((len(ds), 2))
 
