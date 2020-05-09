@@ -82,13 +82,13 @@ The basic syntax for indexing `Datasets` is:
 - Optional assignment values
   - A `list` of backend tensor types to assign
   - A backend tensor type for assignment of a new feature
-  - `None` for deleting a subset of data (instances xor features) 
+  - `None` for deleting a subset of data (instances xor features)
 
 ```python
 # sort all instances by a feature
 ds = ds[np.argsort(ds.x),:]
 
-# sort a subset of instances by a feature
+# sort a subset of features by a feature
 ds = ds[np.argsort(ds.x),[ds.x, ds.y]]
 
 # shuffle all instances
