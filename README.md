@@ -121,13 +121,13 @@ ds[:,[ds.w, ds.v]] = [np.ones((len(ds), 1)), np.zeros((len(ds), 1))]
 ds[:,[ds.q, ds.r]] = np.random.randint(3, size=(len(ds), 4))
 
 # do some scalar element-wise arithmetic
-ds = ds[:,[ds.r, ds.v, ds.q, ds.favorites]] + 1
+ds = ds[:,[ds.r, ds.v, ds.q]] + 1
 
 # do some scalar arithmetic in-place
-ds[:,[ds.r, ds.v, ds.q, ds.favorites]] -= 1
+ds[:,[ds.r, ds.v, ds.q]] -= 1
 
 # do some boolean indexing
-ds = ds[ds.q[:,0]<2, [ds.q, ds.favorites, ds.r]]
+ds = ds[ds.q[:,0]<2, [ds.q, ds.r]]
 
 ```
 
