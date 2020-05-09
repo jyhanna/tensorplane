@@ -91,15 +91,15 @@ ds = ds[np.argsort(ds.x),:]
 # sort a subset of features by a feature
 ds = ds[np.argsort(ds.x),[ds.x, ds.y]]
 
-# shuffle all instances
+# shuffle instances for all features
 shuffle_idxs = np.arange(len(ds))
 np.random.shuffle(shuffle_idxs)
 ds = ds[shuffle_idxs,:]
 
-# reverse all instances
+# reverse all instances for all features
 ds = ds[::-1,:]
 
-# reverse a subset of features
+# reverse instances on a subset of features
 ds = ds[::-1,[ds.x, ds.y]]
 
 # delete some instances
