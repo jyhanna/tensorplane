@@ -81,7 +81,7 @@ The basic syntax for indexing `Datasets` is:
   - An empty slice `:` indicating all features in the dataset are to be accessed or manipulated
 - Optional assignment values
   - A `list` of backend tensor types to assign
-  - A backend tensor type for assignment of a new feature
+  - A backend tensor type (splittable into the indexed feature tensor dimensions)
   - `None` for deleting a subset of data (instances xor features)
 
 ```python
@@ -99,7 +99,7 @@ ds = ds[shuffle_idxs,:]
 # reverse all instances
 ds = ds[::-1,:]
 
-# reverse a subset of instances
+# reverse a subset of features
 ds = ds[::-1,[ds.x, ds.y]]
 
 # delete some instances
@@ -114,11 +114,11 @@ ds[:,[ds.q]] = np.ones((len(ds), 2))
 ds[:,[ds.r]] = np.ones((len(ds), 2))
 
 # create some instances (~vstack)
-ds[len(ds):,:] = module.ones((100, ds.shape[-1]))
+ds[len(ds):,:] = np.ones((100, ds.shape[-1]))
 
-# reassign some instances
-ds[:,[ds.w, ds.v]] = [module.ones((len(ds), 1)), module.zeros((len(ds), 1))]
-ds[:,[ds.q, ds.r]] = module.random.randint(3, size=(len(ds), 4))
+# reassign some features
+ds[:,[ds.w, ds.v]] = [np.ones((len(ds), 1)), np.zeros((len(ds), 1))]
+ds[:,[ds.q, ds.r]] = np.random.randint(3, size=(len(ds), 4))
 
 # do some scalar element-wise arithmetic
 ds = ds[:,[ds.r, ds.v, ds.q, ds.favorites]] + 1
