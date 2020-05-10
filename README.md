@@ -57,18 +57,19 @@ from tensorplane.core.data import Dataset
 from tensorplane.core.wrap import NumPyWrap
 backend.set('PyTorchBackend')
 
+import torch
 import numpy as np
 
 # Ensure NumPy functions properly handle arbitrary backend tensor types
 np = NumPyWrap(np)
 
-# Load data from a file
+# Load data from a file (eg. JSON)
 ds = Dataset.load('YOUR-DATAFILE.json')
 
-# Load data from arrays/tensors
-ds = Dataset(x=np.randint(1, (100, 3)),
-             y=np.randint(1, (100, 2)),
-             z=np.randint(1, (100, 1)))
+# Alternatively, load data from arrays/tensors
+ds = Dataset(x=torch.randint(1, (100, 3)),
+             y=torch.randint(1, (100, 2)),
+             z=torch.randint(1, (100, 1)))
 
 ```
 
@@ -140,7 +141,3 @@ Full documentation coming soon, but if you have any questions, concerns, or sugg
 ## Contributing
 
 Contributions are more than welcome, especially in these early phases of development. Feel free to email `jonathanyussefhanna(at: gmail).com` for more info.
-
-## To-do
-
-A lot
