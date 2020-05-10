@@ -34,7 +34,6 @@ from .utils import (
 	rand_str,
 )
 
-
 def configure():
 	"""
 	Automatically repeat testing on all implemented backends
@@ -229,18 +228,22 @@ class Template:
 	def test_index_instance_slices(self, d):
 		self._complete_index_check(d, I_[::-1], 'reverse slicing')
 		self._complete_index_check(d, I_[::-2], 'reverse slicing skip')
+		self._complete_index_check(d, I_[:1], 'simple one-sided slicing')
+		self._complete_index_check(d, I_[1:], 'simple one-sided slicing')
 
 		if len(d) < 3: return
 
 		self._complete_index_check(d, I_[1:-1], 'inner rows slicing')
-		self._complete_index_check(d, I_[1:-1:-1], 'inner rows reverse slicing')
 		self._complete_index_check(d, I_[:1], 'single element slice')
 
-		if len(d) >= 4: return
+		if len(d) < 4: return
+
+		self._complete_index_check(d, I_[1:-1:-1], 'inner rows reverse slicing')
+
+		self._complete_index_check(d, I_[2:3], 'simple two-sided slicing')
+		self._complete_index_check(d, I_[2:-1], 'simple two-sided slicing')
 
 
-	def test_index_instance_subsets(self):
-		pass
 
 	def test_index_instance_boolean(self):
 		pass

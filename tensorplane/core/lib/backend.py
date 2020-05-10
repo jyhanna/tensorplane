@@ -429,7 +429,7 @@ class NumPyBackend(AbstractBackend):
 		return np.ndarray
 
 	def _dtype(self, d):
-		return type(d.flat[0].item() if all(d.shape) else 0)
+		return type(d.flat[0].item()) if all(d.shape) else d.dtype
 
 	def _shape(self, d):
 		return d.shape
@@ -513,7 +513,7 @@ class PyTorchBackend(AbstractBackend):
 		return torch.tensor
 
 	def _dtype(self, d):
-		return type(d[(0,)*len(d.size())].item() if all(d.size()) else 0)
+		return type(d[(0,)*len(d.size())].item()) if all(d.size()) else d.numpy().dtype
 
 	def _shape(self, d):
 		return tuple(dim for dim in d.size())

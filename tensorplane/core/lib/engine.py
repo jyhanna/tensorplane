@@ -46,12 +46,13 @@ class DataEngine(object):
 			_check(B.is_tensor(v), InvalidTensorType)
 			assert v.shape()[0] == (_outer_shape or v.shape()[0]), 'Feature arrays must have equal length'
 			if not v.shape()[0]:
-				v = B.from_numpy(np.ndarray((0,v.shape()[1])))
+				v = B.from_numpy(np.ndarray((0,v.shape()[1]), dtype=v.dtype()))
 			if len(v.shape()) > 2:
 				v = v.reshape(v.shape()[0], -1)
 			if len(v.shape()) == 1:
 				v = v.reshape(-1, 1)
-			self.set_feature(k,v if v.shape()[0] else v)
+			assert v.to_numpy().dtype == features[k].to_numpy().dtype, f'{v.to_numpy().dtype}, {features[k].to_numpy().dtype}'
+			self.set_feature(k,v)
 
 
 	@classmethod
