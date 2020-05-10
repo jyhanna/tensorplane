@@ -75,9 +75,9 @@ ds = Dataset(x=torch.randint(1, (100, 3)),
 
 It is important to note here that once you've chosen your backend tensor library, **all attributes (feature tensors) of the Dataset will be instances of the library's tensor objects**. You can manipulate these tensors using the library's native tensor-consuming functions OR using `numpy` functions after wrapping the `numpy` module, in `NumPyWrap`, but note that the latter option will yield `np.ndarray`s, not necessarily the tensor objects native to the chosen backend.
 
-Now, you're ready to start manipulating data. Use `Dataset`s powerful indexing syntax to do stuff with, or get stuff from your data. Below are some examples of what you can do (using the NumPy backend, but just replace your inputs and indices with tensors instead if using PyTorch).
+Now, you're ready to start manipulating data. Use `Dataset`s powerful indexing syntax to do stuff with, or get stuff from your data. Below are some examples of what you can do with `Dataset` instances.
 
-The basic syntax for indexing `Datasets` is:
+The basic syntax for indexing `Dataset`s is:
 
 - First Index (dimension 0): Rows/Instances
   - Backend tensor type (e.g. `np.ndarray` or `torch.tensor`) or simply `np.ndarray` of boolean values or indices
