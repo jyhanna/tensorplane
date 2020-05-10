@@ -57,8 +57,8 @@ from tensorplane.core.data import Dataset
 from tensorplane.core.wrap import NumPyWrap
 backend.set('NumPyBackend')
 
-# It's recommended to wrap the NumPy module to ensure function
-# calls properly handle arbitrary backend tensor types
+# Wrapping the NumPy module is recommended to ensure that
+# functions properly handle arbitrary backend tensor types
 import numpy as np
 np = NumPyWrap(np)
 
