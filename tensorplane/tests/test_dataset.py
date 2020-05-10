@@ -101,17 +101,20 @@ def generate_datasets():
 				assert_eq(t, str, 'Type error for tensor other than string')
 				break
 			x = t[:len(fdim)] if isinstance(t, list) else ([t]*len(fdim))
-			yield build_dataset(s, x), s
+			yield build_dataset(s, x), s, t
 
 
-def dataset_parameterize(foreach_feature=False, with_structure=False):
+def dataset_parameterize(foreach_feature=False,
+						 with_structure=False,
+						 with_type=False):
 	"""
 	Parameterize a dataset from setup generator
 	"""
 	def parameterize_dec(func):
 		def test_wrapper(func, *args, **kwargs):
-			for d,s in generate_datasets():
+			for d,s,t in generate_datasets():
 				d_args = (d,s) if with_structure else (d,)
+				d_args = d_args+(t,) if with_type else d_args
 				if foreach_feature:
 					for f in np_convert(d.tensors, copy=False):
 						func(args[0], *(d_args+(f,)), **kwargs)
@@ -128,7 +131,8 @@ def d(): return
 def s(): return
 @pytest.fixture
 def f(): return
-
+@pytest.fixture
+def t(): return
 
 class Template:
 
@@ -217,6 +221,11 @@ class Template:
 		ids = np.argsort(f).reshape(-1)
 		self._complete_index_check(d, ids, 'sorting using argsort')
 
+	@dataset_parameterize(foreach_feature=True, with_type=True)
+	def test_index_instance_boolean(self, d, f, t):
+		print(t)
+		self._complete_index_check(d, f[:, 0]<1, 'boolean indexing')
+
 	@dataset_parameterize()
 	def test_index_instance_shuffling(self, d):
 		shuffle_idxs = np.arange(len(d))
@@ -243,10 +252,6 @@ class Template:
 		self._complete_index_check(d, I_[2:3], 'simple two-sided slicing')
 		self._complete_index_check(d, I_[2:-1], 'simple two-sided slicing')
 
-
-
-	def test_index_instance_boolean(self):
-		pass
 
 	def test_index_instance_creation(self):
 		pass
