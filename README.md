@@ -54,9 +54,13 @@ To get started, load a dataset from a file using `Dataset.load` or initialize it
 ```python
 from tensorplane.core.lib import backend
 from tensorplane.core.data import Dataset
+from tensorplane.core.wrap import NumPyWrap
 backend.set('NumPyBackend')
 
+# it is recommended to wrap NumPy calls into a NumPyWrap object to ensure
+# that NumPy functions properly handle arbitrary backend tensor types
 import numpy as np
+np = NumPyWrap(np)
 
 # Load data from a file
 ds = Dataset.load('YOUR-DATAFILE.json')
