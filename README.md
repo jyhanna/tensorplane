@@ -55,11 +55,11 @@ To get started, load a dataset from a file using `Dataset.load` or initialize it
 from tensorplane.core.lib import backend
 from tensorplane.core.data import Dataset
 from tensorplane.core.wrap import NumPyWrap
-backend.set('NumPyBackend')
+backend.set('PyTorchBackend')
 
-# Wrapping the NumPy module is recommended to ensure that
-# functions properly handle arbitrary backend tensor types
 import numpy as np
+
+# Ensure NumPy functions properly handle arbitrary backend tensor types
 np = NumPyWrap(np)
 
 # Load data from a file
