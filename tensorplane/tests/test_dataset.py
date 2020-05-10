@@ -227,7 +227,6 @@ class Template:
 
 	@dataset_parameterize()
 	def test_index_instance_slices(self, d):
-		return
 		self._complete_index_check(d, I_[::-1], 'reverse slicing')
 		self._complete_index_check(d, I_[::-2], 'reverse slicing skip')
 
