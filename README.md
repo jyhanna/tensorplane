@@ -73,12 +73,14 @@ ds = Dataset(x=torch.randint(1, (100, 3)),
 
 ```
 
+It is important to note here that once you've chosen your backend tensor library, **all attributes (feature tensors) of the Dataset will be instances of the library's tensor objects**. You can manipulate these tensors using the library's native tensor-consuming functions OR using `numpy` functions after wrapping the `numpy` module, in `NumPyWrap`, but note that the latter option will yield `np.ndarray`s, not necessarily the tensor objects native to the chosen backend.
+
 Now, you're ready to start manipulating data. Use `Dataset`s powerful indexing syntax to do stuff with, or get stuff from your data. Below are some examples of what you can do (using the NumPy backend, but just replace your inputs and indices with tensors instead if using PyTorch).
 
 The basic syntax for indexing `Datasets` is:
 
 - First Index (dimension 0): Rows/Instances
-  - Backend tensor type (e.g. `np.ndarray` or `torch.tensor`) of boolean values or indices
+  - Backend tensor type (e.g. `np.ndarray` or `torch.tensor`) or simply `np.ndarray` of boolean values or indices
   - An `int` for a specific row / instance location
   - A `slice` object, with the typical slice behavior
 - Second Index (dimension 1): Columns/features
@@ -135,6 +137,10 @@ ds[:,[ds.r, ds.v, ds.q]] -= 1
 ds = ds[ds.q[:,0]<2, [ds.q, ds.r]]
 
 ```
+
+**Is this code really portable between tensor / machine learning libraries?**
+
+**Yes**. Although each feature tensor of `ds` is a tensor object specific to the current backend (e.g. `torch.tensor` for the PyTorch backend), The `Dataset` class immediately abstracts (or *wraps*) tensors when they are about to be processed into a single tensor interface, and then de-abstracts (or *unwraps*) them when returning results of computations such as indexing, shuffling, or arithmetic operations. Furthermore, the `NumPyWrap` class allows you to use `numpy` functions on tensor objects from any implemented backend tensor library, so you can use the common array manipulation functions you know and love in your data processing pipeline.
 
 Full documentation coming soon, but if you have any questions, concerns, or suggestions, see the email listed below or start an issue.
 
