@@ -10,6 +10,9 @@ import decorator
 
 import torch
 import numpy as np
+from tensorplane.core.wrap import NumPyWrap
+
+np = NumPyWrap(np)
 
 from itertools import product
 
@@ -30,10 +33,6 @@ from .utils import (
 	lprod,
 	rand_str,
 )
-
-
-np.random.seed(0)
-random.seed(0)
 
 
 def configure():
@@ -123,6 +122,7 @@ def dataset_parameterize(foreach_feature=False, with_structure=False):
 	return parameterize_dec
 
 
+# fixtures overwritten by custom decorator
 @pytest.fixture
 def d(): return
 @pytest.fixture
@@ -135,9 +135,11 @@ class Template:
 
 	@classmethod
 	def setup_class(cls):
-		backend.set(cls.B)
 		global B
+		backend.set(cls.B)
 		B = backend.get()
+		np.random.seed(0)
+		random.seed(0)
 
 	### Dimension properties tests
 
@@ -183,57 +185,60 @@ class Template:
 
 	### Indexing tests
 
-	def _index_consistency_check(self, d, idx1, idx2, other_ts, msg=''):
-		np_fn = lambda a: a[(array(idx1) if B.is_raw_tensor(idx1) else idx),:]
+	def _index_check(self, d, idx1, idx2, other_ts, msg):
+		np_fn = lambda a: a[(array(idx1) if B.is_raw_tensor(idx1) else idx1),:]
 		np_idx = idx2 if idx2 != all_slice else d.tensors
-		tgt = np_convert(np_idx, fn=np_fn) + np_convert(other_ts, copy=True)
+		tgt = (np_convert(np_idx, fn=np_fn, copy=True) +
+			   np_convert(other_ts, copy=True))
 		res = np_convert(d[idx1, idx2].tensors) + np_convert(other_ts)
 		assert_all_eq(zip(res, tgt), msg)
 
-	@dataset_parameterize(foreach_feature=True)
-	def test_index_instance_sorting(self, d, f):
+	def _complete_index_check(self, d, idx1, msg):
 		if not len(d): return
-		if f.shape[1] != 1: return
-
-		ids = tensor(np.argsort(f).reshape(-1))
-		self._index_consistency_check(d, ids, I_[:], [],
-		'Incorrect index full dataset sorting using argsort')
+		self._index_check(d, idx1, I_[:], [],
+		f'Incorrect index full dataset {msg}')
 
 		if d.size[1] < 2: return
 
-		self._index_consistency_check(d, ids, d.tensors[:1], d.tensors[1:],
-		'Incorrect index subset sorting sorting using argsort')
+		self._index_check(d, idx1, d.tensors[:1], d.tensors[1:],
+		f'Incorrect index subset ')
 
 		if d.size[1] < 3: return
 
-		self._index_consistency_check(d, ids, d.tensors[:2], d.tensors[2:],
-		'Incorrect index subset sorting sorting using argsort')
+		self._index_check(d, idx1, d.tensors[:2], d.tensors[2:],
+		f'Incorrect index subset (first) {msg}')
+		self._index_check(d, idx1, d.tensors[1:2], d.tensors[:1]+d.tensors[2:],
+		f'Incorrect index subset (middle) {msg}')
+		self._index_check(d, idx1, d.tensors[2:], d.tensors[:2],
+		f'Incorrect index subset (last) {msg}')
+
+	@dataset_parameterize(foreach_feature=True)
+	def test_index_instance_sorting(self, d, f):
+		if f.shape[1] != 1: return
+		ids = np.argsort(f).reshape(-1)
+		self._complete_index_check(d, ids, 'sorting using argsort')
 
 	@dataset_parameterize()
 	def test_index_instance_shuffling(self, d):
-		if not len(d): return
-
 		shuffle_idxs = np.arange(len(d))
 		np.random.shuffle(shuffle_idxs)
 		ids = tensor(shuffle_idxs)
+		self._complete_index_check(d, ids, 'shuffling')
 
-		self._index_consistency_check(d, ids, I_[:], [],
-		'Incorrect index full dataset shuffling')
+	@dataset_parameterize()
+	def test_index_instance_slices(self, d):
+		return
+		self._complete_index_check(d, I_[::-1], 'reverse slicing')
+		self._complete_index_check(d, I_[::-2], 'reverse slicing skip')
 
-		if d.size[1] < 2: return
+		if len(d) < 3: return
 
-		self._index_consistency_check(d, ids, d.tensors[:1], d.tensors[1:],
-		'Incorrect index subset sorting shuffling')
+		self._complete_index_check(d, I_[1:-1], 'inner rows slicing')
+		self._complete_index_check(d, I_[1:-1:-1], 'inner rows reverse slicing')
+		self._complete_index_check(d, I_[:1], 'single element slice')
 
-		if d.size[1] < 3: return
+		if len(d) >= 4: return
 
-		self._index_consistency_check(d, ids, d.tensors[:2], d.tensors[2:],
-		'Incorrect index subset sorting shuffling')
-
-
-	@dataset_parameterize(foreach_feature=True)
-	def test_index_instance_slices(self, d, f):
-		if not len(d): return
 
 	def test_index_instance_subsets(self):
 		pass

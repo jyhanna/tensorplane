@@ -36,12 +36,13 @@ def set(backend_name=''):
 	is not provided, the 'TENSORPLANE_BACKEND' environment variable will be used.
 	"""
 	_B = backend_name or os.getenv('TENSORPLANE_BACKEND')
-
+	if 'B' not in globals():
+		global B
 	try:
 		if _B in backends:
-			if 'B' not in globals():
-				global B
+			# import necessary backend library dependency
 			globals()[backends[_B][1]] = __import__(backends[_B][0])
+			# set global backend
 			B = globals()[_B]()
 		elif _B is None:
 			get() # raise 'no backend' exception
@@ -143,6 +144,7 @@ class AbstractTensor(object):
 
 	def __repr__(self):
 		return str(self)
+
 
 class AbstractBackend(object):
 	"""
@@ -566,7 +568,7 @@ class PyTorchBackend(AbstractBackend):
 		return d.tolist()
 
 	def _to_numpy(self, d):
-		return d.numpy()
+		return d.cpu().numpy()
 
 	def _concat(self, ds, axis):
 		return torch.cat(ds, dim=axis)

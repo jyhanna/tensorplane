@@ -7,7 +7,7 @@ from itertools import chain, product
 
 import numpy as np
 
-from .utils import is_class, is_subclass, split_array, list_flatten, all_slice, I_
+from .utils import is_class, is_subclass, split_tensor, list_flatten, all_slice, I_
 
 from .backend import AbstractTensor
 from .attrs import UndefinedAttribute, NullAssignment
@@ -144,7 +144,7 @@ class AbstractIndex(object):
 
 
 class AbstractDatasetIndex(AbstractIndex):
-	outputs = index([int, slice, AbstractTensor],
+	outputs = index([int, slice, AbstractTensor, np.ndarray],
 					[[AbstractTensor], [UndefinedAttribute]],
 					[[AbstractTensor], None, NullAssignment],
 					is_compact=True)
@@ -155,15 +155,15 @@ class AbstractDatasetIndex(AbstractIndex):
 	def wrap_array(self, *x):
 		return tuple([v for v in x[:-1]] + [[x[-1]]])
 
-	def split_array(self, r, c, v):
-		return (r, c, split_array(c, v))
+	def split_tensor(self, r, c, v):
+		return (r, c, split_tensor(c, v))
 
 
 class IndexRowSubset(AbstractDatasetIndex):
 	def define(self, **kwargs):
-		self.inputs = index(int, slice, AbstractTensor)
+		self.inputs = index(int, slice, AbstractTensor, np.ndarray)
 		self.assign = [
-			Map(index(AbstractTensor),   self.split_array),
+			Map(index(AbstractTensor),   self.split_tensor),
 			Map(index([AbstractTensor]), self.identity),
 			Map(index(NullAssignment),   self.identity),
 			Map(index(None),             self.identity),
@@ -192,7 +192,7 @@ class IndexRowXORColumnSubset(AbstractDatasetIndex):
 							(all_slice, [AbstractTensor]),
 							(IndexRowSubset, all_slice))
 		self.assign = [
-			Map(index(AbstractTensor),   self.split_array),
+			Map(index(AbstractTensor),   self.split_tensor),
 			Map(index([AbstractTensor]), self.identity),
 			Map(index(NullAssignment),   self.identity),
 			Map(index(None),             self.identity),
@@ -207,7 +207,7 @@ class IndexRowORColumnSubset(AbstractDatasetIndex):
 	def define(self, **kwargs):
 		self.inputs = index((IndexRowSubset, [AbstractTensor]))
 		self.assign = [
-			Map(index(AbstractTensor),   self.split_array),
+			Map(index(AbstractTensor),   self.split_tensor),
 			Map(index([AbstractTensor]), self.identity),
 			Map(index(NullAssignment),   self.identity)
 	  	]

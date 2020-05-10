@@ -6,15 +6,16 @@ import time
 all_slice = slice(None, None, None)
 
 
-def split_array(col_list, array):
+def split_tensor(col_list, array):
 	"""
-	Split an AbstractTensor vertically w.r.t a list of tensors
+	Split an AbstractTensor vertically w.r.t a list of tensors or np.ndarrays
 	"""
 	new_arr = [0]*len(col_list)
 	prev_idx = 0
 	for i,x in enumerate(col_list):
-		new_arr[i] = array.index(I_[:,prev_idx:prev_idx+x.shape()[-1]])
-		prev_idx += x.shape()[-1]
+		x_dim1 = x.shape[-1] if isinstance(x, np.ndarray) else x.shape()[-1]
+		new_arr[i] = array.index(I_[:,prev_idx:prev_idx+x_dim1])
+		prev_idx += x_dim1
 	return new_arr
 
 

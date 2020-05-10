@@ -231,7 +231,7 @@ class DataEngine(object):
 			Bad tensor indexer shape {idx0.shape()}; dimension 0 should equal
 			dataset length {len(self)} (the number of instances in dataset)""")))
 		return DataEngine(**{self.get_feature(tensor):tensor.index(I_[idx0,:])
-					   for tensor in idx1})
+					   		 for tensor in idx1})
 
 	def __setitem__(self, i, val):
 		idx0, idx1, val = self._indexer(i, val, all_columns=self.tensors)
