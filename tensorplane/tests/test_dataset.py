@@ -222,9 +222,16 @@ class Template:
 		self._complete_index_check(d, ids, 'sorting using argsort')
 
 	@dataset_parameterize(foreach_feature=True, with_type=True)
-	def test_index_instance_boolean(self, d, f, t):
-		print(t)
-		self._complete_index_check(d, f[:, 0]<1, 'boolean indexing')
+	def test_index_instance_boolean(self, d, t, f):
+		if t == int or t == float:
+			self._complete_index_check(d, f[:, 0]<1, 'boolean int indexing')
+			self._complete_index_check(d, f[:, 0]>1., 'boolean float indexing')
+			self._complete_index_check(d, f[:, 0]>10e9, 'boolean indexing empty')
+		if t == str:
+			self._complete_index_check(d, f[:, 0]=='', 'boolean empty str indexing')
+			self._complete_index_check(d, f[:, 0]!='', 'boolean full str indexing')
+			if len(f):
+				self._complete_index_check(d, f[:, 0]==f[0,0], 'boolean single str indexing')
 
 	@dataset_parameterize()
 	def test_index_instance_shuffling(self, d):
