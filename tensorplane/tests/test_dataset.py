@@ -17,7 +17,7 @@ np = NumPyWrap(np)
 from itertools import product
 
 from tensorplane.core.lib import backend
-from tensorplane.core.lib.utils import I_, all_slice
+from tensorplane.core.lib.utils import I_, all_slice, split_tensor
 from tensorplane.core.data import Dataset
 
 from .utils import (
@@ -188,31 +188,37 @@ class Template:
 
 	### Indexing tests
 
-	def _index_check(self, d, idx1, idx2, other_ts, msg):
+	def _index_retrieval_check(self, d, idx1, idx2, nonidx2, msg):
 		np_fn = lambda a: a[(array(idx1) if B.is_raw_tensor(idx1) else idx1),:]
 		np_idx = idx2 if idx2 != all_slice else d.tensors
-		tgt = (np_convert(np_idx, fn=np_fn, copy=True) +
-			   np_convert(other_ts, copy=True))
-		res = np_convert(d[idx1, idx2].tensors) + np_convert(other_ts)
+
+		tgt = (np_convert(np_idx, fn=np_fn, copy=True) + np_convert(nonidx2, copy=True))
+		res = np_convert(d[idx1, idx2].tensors) + np_convert(nonidx2)
+		assert_all_eq(zip(res, tgt), msg)
+
+	def _index_assignment_check(self, d, idx1, idx2, nonidx2, assign, np_tgt, msg):
+		d[idx1, idx2] = assign
+		tgt = np_tgt + np_convert(nonidx2, copy=True)
+		res = np_convert(d[idx1, idx2].tensors) + np_convert(nonidx2)
 		assert_all_eq(zip(res, tgt), msg)
 
 	def _complete_index_check(self, d, idx1, msg):
 		if not len(d): return
-		self._index_check(d, idx1, I_[:], [],
+		self._index_retrieval_check(d, idx1, I_[:], [],
 		f'Incorrect index full dataset {msg}')
 
 		if d.size[1] < 2: return
 
-		self._index_check(d, idx1, d.tensors[:1], d.tensors[1:],
+		self._index_retrieval_check(d, idx1, d.tensors[:1], d.tensors[1:],
 		f'Incorrect index subset ')
 
 		if d.size[1] < 3: return
 
-		self._index_check(d, idx1, d.tensors[:2], d.tensors[2:],
+		self._index_retrieval_check(d, idx1, d.tensors[:2], d.tensors[2:],
 		f'Incorrect index subset (first) {msg}')
-		self._index_check(d, idx1, d.tensors[1:2], d.tensors[:1]+d.tensors[2:],
+		self._index_retrieval_check(d, idx1, d.tensors[1:2], d.tensors[:1]+d.tensors[2:],
 		f'Incorrect index subset (middle) {msg}')
-		self._index_check(d, idx1, d.tensors[2:], d.tensors[:2],
+		self._index_retrieval_check(d, idx1, d.tensors[2:], d.tensors[:2],
 		f'Incorrect index subset (last) {msg}')
 
 	@dataset_parameterize(foreach_feature=True)
@@ -260,8 +266,17 @@ class Template:
 		self._complete_index_check(d, I_[2:-1], 'simple two-sided slicing')
 
 
-	def test_index_instance_creation(self):
+	def test_index_scalar_arithmetic(self):
 		pass
+
+	@dataset_parameterize()
+	def test_index_instance_creation(self, d):
+		if not len(d): return
+
+		new_rows = tensor(np.zeros((len(d), d.shape[-1])))
+		np_tgt = split_tensor(np_convert(d.tensors), new_rows.astype(0))
+		self._index_assignment_check(d, I_[len(d):], I_[:], [], new_rows, np_tgt,
+		'Bad indexing instance creation (hstack): DS[len(d):,:] <- tensor')
 
 	def test_index_feature_creation(self):
 		pass
@@ -276,9 +291,6 @@ class Template:
 		pass
 
 	def test_index_feature_deletion(self):
-		pass
-
-	def test_index_scalar_arithmetic(self):
 		pass
 
 	def test_index_scalar_assignment(self):

@@ -140,7 +140,7 @@ ds = ds[ds.q[:,0]<2, [ds.q, ds.r]]
 
 **Is this code really portable between tensor / machine learning libraries?**
 
-**Yes**. Although each feature tensor of `ds` is a tensor object specific to the current backend (e.g. `torch.tensor` for the PyTorch backend), The `Dataset` class immediately abstracts (or *wraps*) tensors when they are about to be processed into a single tensor interface, and then de-abstracts (or *unwraps*) them when returning results of computations such as indexing, shuffling, or arithmetic operations. Furthermore, the `NumPyWrap` class allows you to use `numpy` functions on tensor objects from any implemented backend tensor library, so you can use the common array manipulation functions you know and love in your data processing pipeline.
+**Yes**. Although each feature tensor of `ds` is a tensor object specific to the current backend (e.g. `torch.tensor` for the PyTorch backend), The `Dataset` class abstracts (or *wraps*) tensors of the current backend type into a common tensor interface when they are internally processed by an instance, and then de-abstracts (or *unwraps*) them when results of computations such as indexing, shuffling, or arithmetic operations are returned or assigned. Furthermore, the `NumPyWrap` class allows you to use `numpy` functions on tensor objects from any implemented backend tensor library, so you can use the common array manipulation functions you know and love in your data processing pipeline.
 
 Full documentation coming soon, but if you have any questions, concerns, or suggestions, see the email listed below or start an issue.
 

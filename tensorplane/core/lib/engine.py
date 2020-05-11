@@ -241,10 +241,10 @@ class DataEngine(object):
 		else:
 			curr_length = len(self)
 			for i,a in enumerate(idx1):
-				# hstack - add new feature(s)
+				# vstack - add new feature(s)
 				if isinstance(a, UndefinedAttribute):
 					self.set_feature(a.value_, val[i])
-				# vstack - add new instances
+				# hstack - add new instances
 				elif idx0 == slice(curr_length, None, None):
 					f = self.get_feature(a)
 					self.set_feature(f, self.aggregate(a, val[i], axis=0))

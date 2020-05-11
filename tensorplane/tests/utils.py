@@ -20,6 +20,8 @@ lprod =  lambda *args: list(product(*args))
 def np_convert(ts, fn=(lambda x: x), copy=False):
     return [fn(array(c).copy() if copy else array(c)) for c in ts]
 
+def coalesced_type(d):
+    
 
 def assert_all_eq(iter, msg):
     failures = []

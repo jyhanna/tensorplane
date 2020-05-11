@@ -2,11 +2,12 @@ import os
 import sys
 import time
 
+import numpy as np
 
 all_slice = slice(None, None, None)
 
 
-def split_tensor(col_list, array):
+def split_tensor(col_list, tensor):
 	"""
 	Split an AbstractTensor vertically w.r.t a list of tensors or np.ndarrays
 	"""
@@ -14,7 +15,8 @@ def split_tensor(col_list, array):
 	prev_idx = 0
 	for i,x in enumerate(col_list):
 		x_dim1 = x.shape[-1] if isinstance(x, np.ndarray) else x.shape()[-1]
-		new_arr[i] = array.index(I_[:,prev_idx:prev_idx+x_dim1])
+		subset_slice = I_[:,prev_idx:prev_idx+x_dim1]
+		new_arr[i] = tensor[subset_slice] if isinstance(x, np.ndarray) else tensor.index(subset_slice)
 		prev_idx += x_dim1
 	return new_arr
 
