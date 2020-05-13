@@ -100,7 +100,7 @@ class DataEngine(object):
 		"""
 		Homogenized data as an array/tensor backing the Dataset
 		"""
-		return self.aggregate(*self.tensors)
+		return self.coalesce(*self.tensors)
 
 	@property
 	def features(self):
@@ -183,7 +183,7 @@ class DataEngine(object):
 		else:
 			del self._features[f]
 
-	def aggregate(self, *data, axis=1):
+	def coalesce(self, *data, axis=1):
 		"""
 		"""
 		ranks = [str, float, int]
@@ -245,7 +245,7 @@ class DataEngine(object):
 				# hstack - add new instances
 				elif idx0 == slice(curr_length, None, None):
 					f = self.get_feature(a)
-					self.set_feature(f, self.aggregate(a, val[i], axis=0))
+					self.set_feature(f, self.coalesce(a, val[i], axis=0))
 				# value assignments
 				else:
 					a.index(I_[idx0,:], v=val[i])
