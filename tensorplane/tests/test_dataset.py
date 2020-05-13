@@ -26,6 +26,7 @@ from .utils import (
 	assert_true,
 	assert_none,
 	assert_eq,
+	coalesced_type,
 	np_convert,
 	array,
 	tensor,
@@ -196,10 +197,12 @@ class Template:
 		res = np_convert(d[idx1, idx2].tensors) + np_convert(nonidx2)
 		assert_all_eq(zip(res, tgt), msg)
 
-	def _index_assignment_check(self, d, idx1, idx2, nonidx2, assign, np_tgt, msg):
-		d[idx1, idx2] = assign
-		tgt = np_tgt + np_convert(nonidx2, copy=True)
-		res = np_convert(d[idx1, idx2].tensors) + np_convert(nonidx2)
+	def _index_assignment_check(self, d, idx, nonidx2, assign, tgt, msg):
+		d[idx] = assign
+		res = np_convert(d.tensors)
+		if nonidx2:
+			tgt = np.hstack((tgt, np_convert(nonidx2, copy=True)))
+			res = np.hstack((res, np_convert(nonidx2)))
 		assert_all_eq(zip(res, tgt), msg)
 
 	def _complete_index_check(self, d, idx1, msg):
@@ -227,6 +230,13 @@ class Template:
 		ids = np.argsort(f).reshape(-1)
 		self._complete_index_check(d, ids, 'sorting using argsort')
 
+	@dataset_parameterize()
+	def test_index_instance_shuffling(self, d):
+		shuffle_idxs = np.arange(len(d))
+		np.random.shuffle(shuffle_idxs)
+		ids = tensor(shuffle_idxs)
+		self._complete_index_check(d, ids, 'shuffling')
+
 	@dataset_parameterize(foreach_feature=True, with_type=True)
 	def test_index_instance_boolean(self, d, t, f):
 		if t == int or t == float:
@@ -238,13 +248,6 @@ class Template:
 			self._complete_index_check(d, f[:, 0]!='', 'boolean full str indexing')
 			if len(f):
 				self._complete_index_check(d, f[:, 0]==f[0,0], 'boolean single str indexing')
-
-	@dataset_parameterize()
-	def test_index_instance_shuffling(self, d):
-		shuffle_idxs = np.arange(len(d))
-		np.random.shuffle(shuffle_idxs)
-		ids = tensor(shuffle_idxs)
-		self._complete_index_check(d, ids, 'shuffling')
 
 	@dataset_parameterize()
 	def test_index_instance_slices(self, d):
@@ -261,22 +264,38 @@ class Template:
 		if len(d) < 4: return
 
 		self._complete_index_check(d, I_[1:-1:-1], 'inner rows reverse slicing')
-
 		self._complete_index_check(d, I_[2:3], 'simple two-sided slicing')
 		self._complete_index_check(d, I_[2:-1], 'simple two-sided slicing')
-
 
 	def test_index_scalar_arithmetic(self):
 		pass
 
 	@dataset_parameterize()
 	def test_index_instance_creation(self, d):
-		if not len(d): return
+		def vstack_np(new):
+			if not isinstance(new, list): # split
+				new = array(new)
+				new_type = coalesced_type(np_convert(d.tensors)+[new])
+				np_tgt = split_tensor(np_convert(d.tensors), new.astype(new_type))
+			else:
+				np_tgt = np_convert(new)
+			return [np.vstack((array(t), np_tgt[i])) for i,t in enumerate(d.tensors)]
 
-		new_rows = tensor(np.zeros((len(d), d.shape[-1])))
-		np_tgt = split_tensor(np_convert(d.tensors), new_rows.astype(0))
-		self._index_assignment_check(d, I_[len(d):], I_[:], [], new_rows, np_tgt,
-		'Bad indexing instance creation (hstack): DS[len(d):,:] <- tensor')
+		new_rows = tensor(np.random.randint(10, size=(20, d.shape[-1])))
+		self._index_assignment_check(d, I_[len(d):,:], [], new_rows, vstack_np(new_rows),
+		'Bad indexing instance creation (hstack): d[len(d):,:] <- tensor[int]')
+
+		new_rows = tensor(np.random.uniform(size=(20, d.shape[-1])))
+		self._index_assignment_check(d, I_[len(d):,:], [], new_rows, vstack_np(new_rows),
+		'Bad indexing instance creation (hstack): d[len(d):,:] <- tensor[float]')
+
+		new_rows = [tensor(np.random.randint(10, size=(20, w))) for w in d.structure[1]]
+		self._index_assignment_check(d, I_[len(d):,:], [], new_rows, vstack_np(new_rows),
+		'Bad indexing instance creation (hstack): d[len(d):,:] <- [tensor[int]]')
+
+		new_rows = [tensor(np.random.uniform(size=(20, w))) for w in d.structure[1]]
+		self._index_assignment_check(d, I_[len(d):,:], [], new_rows, vstack_np(new_rows),
+		'Bad indexing instance creation (hstack): d[len(d):,:] <- [tensor[float]]')
 
 	def test_index_feature_creation(self):
 		pass

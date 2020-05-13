@@ -509,6 +509,12 @@ class NumPyBackend(AbstractBackend):
 
 class PyTorchBackend(AbstractBackend):
 
+	def _type_map(self, t):
+		return {
+			float: torch.float64,
+			int: torch.int64,
+		}[t]
+
 	def _tensor(self):
 		return torch.tensor
 
@@ -531,7 +537,7 @@ class PyTorchBackend(AbstractBackend):
 		return torch.is_tensor(x)
 
 	def _type(self, d, dtype):
-		return getattr(d, dtype.__name__)()
+		return d.type(self._type_map(dtype))
 
 	def _reshape(self, d, *shape):
 		return d.view(*shape)
@@ -580,7 +586,6 @@ class PyTorchBackend(AbstractBackend):
 			idx = slice(idx,idx+1,1)
 		idx1, idx2 = slice_to_range(idx, d.size(0), fn=torch.arange, invert=True)
 		idx = torch.cat((idx1,idx2))
-		print(idx)
 		return  d[idx]
 
 	def _index(self, d, i, v=None):

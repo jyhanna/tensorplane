@@ -187,8 +187,6 @@ class DataEngine(object):
 		"""
 		"""
 		ranks = [str, float, int]
-		if data and data[0].shape()[0] == 0:
-			return B.from_list([])
 		dtypes = set([d.dtype() for d in data])
 
 		if len(data) == 1:
