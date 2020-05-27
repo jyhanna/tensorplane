@@ -4,8 +4,9 @@ python: 3.7
 # https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/use-conda-with-travis-ci.html
 install:
   - sudo apt-get update
-  - python setup.py install
   - pip install pytest codecov pytest-cov
+  - pip install pytorch
+  - python setup.py install
 
 script:
   - py.test --cov-report=xml --cov='.' tensorplane/tests/
