@@ -10,6 +10,7 @@ dependencies:
   # testing
   - pytest>=5.0.1
   - decorator>=4.4
+  - codecov
 
   # distribution
   - twine
