@@ -7,6 +7,7 @@
 # Tensorplane: Unified data management in Python
 
 [![Build Status](https://travis-ci.org/jyhanna/tensorplane.svg?branch=master)](https://travis-ci.org/jyhanna/tensorplane)
+[![codecov](https://codecov.io/gh/jyhanna/tensorplane/branch/master/graph/badge.svg)](https://codecov.io/gh/jyhanna/tensorplane)
 
 Tensorplane is a Python library for high-level dataset management built upon powerful array and tensor frameworks like NumPy and PyTorch. While other dataset-oriented Python libraries exist, Tensorplane is modularly designed to leverage these advanced and well-supported backend frameworks to provide a single data access and manipulation interface for common data operations. Tensorplane is further designed for modern deep learning data processing pipelines by supporting a collection of multidimensional feature tensors encapsulated in a single object. Each tensor can also be a different type, allowing uniform manipulation of potentially heterogeneous datasets.
 
