@@ -9,7 +9,7 @@ install:
   - python setup.py install
 
 script:
-  - py.test --cov-report=xml --cov='.' tensorplane/tests/
+  - py.test --cov-report=xml --cov=tensorplane tensorplane/tests/
 
 after_success:
   - codecov
