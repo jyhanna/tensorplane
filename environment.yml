@@ -10,7 +10,6 @@ dependencies:
   # testing
   - pytest>=5.0.1
   - decorator>=4.4
-  - codecov
 
   # distribution
   - twine
@@ -18,6 +17,3 @@ dependencies:
   # optional
   - matplotlib>=2.2
   - scipy>=1.2
-
-  - pip:
-    - "git+https://github.com/codecov/codecov-python.git"
